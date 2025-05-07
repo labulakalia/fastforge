@@ -1,7 +1,7 @@
 output: dist/
 variables:
 #  FLUTTER_ROOT: ~/fvm/versions/3.16.5
-  # PGYER_API_KEY: your api key
+# PGYER_API_KEY: your api key
 releases:
   - name: dev-profile
     jobs:

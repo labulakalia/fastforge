@@ -13,6 +13,9 @@ display_name: Hola Amigos
 # the name should be all lowercase with -+.
 package_name: hola-amigos
 
+# https://man.archlinux.org/man/alpm-pkgrel.7.en
+package_release: 1
+
 licenses:
   - MIT
 
@@ -111,7 +114,7 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
     this.optDependencies,
     this.options,
     this.startupNotify = false,
-    this.groups = const ['default'],
+
     this.licenses = const ['unknown'],
     this.icon,
     this.metainfo,
@@ -120,9 +123,9 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
     this.conflicts,
     this.replaces,
     this.supportedMimeType,
-  })  : _postinstallScripts = postinstallScripts ?? [],
-        _postupgradeScripts = postupgradeScripts ?? [],
-        _postremoveScripts = postuninstallScripts ?? [];
+  }) : _postinstallScripts = postinstallScripts ?? [],
+       _postupgradeScripts = postupgradeScripts ?? [],
+       _postremoveScripts = postuninstallScripts ?? [];
 
   factory MakePacmanConfig.fromJson(Map<String, dynamic> map) {
     return MakePacmanConfig(
@@ -131,51 +134,62 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
       packageRelease: int.tryParse(map['package_release'] ?? '1') ?? 1,
       maintainer:
           "${map['maintainer']['name']} <${map['maintainer']['email']}>",
-      dependencies: map['dependencies'] != null
-          ? List.castFrom<dynamic, String>(map['dependencies'])
-          : null,
-      conflicts: map['conflicts'] != null
-          ? List.castFrom<dynamic, String>(map['conflicts'])
-          : null,
-      replaces: map['replaces'] != null
-          ? List.castFrom<dynamic, String>(map['replaces'])
-          : null,
-      options: map['options'] != null
-          ? List.castFrom<dynamic, String>(map['options'])
-          : null,
-      optDependencies: map['optional_dependencies'] != null
-          ? List.castFrom<dynamic, String>(map['optional_dependencies'])
-          : null,
-      licenses: map['licenses'] != null
-          ? List.castFrom<dynamic, String>(map['licenses'])
-          : ['unknown'],
-      groups: map['groups'] != null
-          ? List.castFrom<dynamic, String>(map['groups'])
-          : ['default'],
-      provides: map['provides'] != null
-          ? List.castFrom<dynamic, String>(map['provides'])
-          : null,
-      postinstallScripts: map['postinstall_scripts'] != null
-          ? List.castFrom<dynamic, String>(map['postinstall_scripts'])
-          : null,
-      postuninstallScripts: map['postuninstall_scripts'] != null
-          ? List.castFrom<dynamic, String>(map['postuninstall_scripts'])
-          : null,
-      postupgradeScripts: map['postupgrade_scripts'] != null
-          ? List.castFrom<dynamic, String>(map['postupgrade_scripts'])
-          : null,
-      keywords: map['keywords'] != null
-          ? List.castFrom<dynamic, String>(map['keywords'])
-          : null,
-      supportedMimeType: map['supported_mime_type'] != null
-          ? List.castFrom<dynamic, String>(map['supported_mime_type'])
-          : null,
-      actions: map['actions'] != null
-          ? List.castFrom<dynamic, String>(map['actions'])
-          : null,
-      categories: map['categories'] != null
-          ? List.castFrom<dynamic, String>(map['categories'])
-          : null,
+      dependencies:
+          map['dependencies'] != null
+              ? List.castFrom<dynamic, String>(map['dependencies'])
+              : null,
+      conflicts:
+          map['conflicts'] != null
+              ? List.castFrom<dynamic, String>(map['conflicts'])
+              : null,
+      replaces:
+          map['replaces'] != null
+              ? List.castFrom<dynamic, String>(map['replaces'])
+              : null,
+      options:
+          map['options'] != null
+              ? List.castFrom<dynamic, String>(map['options'])
+              : null,
+      optDependencies:
+          map['optional_dependencies'] != null
+              ? List.castFrom<dynamic, String>(map['optional_dependencies'])
+              : null,
+      licenses:
+          map['licenses'] != null
+              ? List.castFrom<dynamic, String>(map['licenses'])
+              : ['unknown'],
+      provides:
+          map['provides'] != null
+              ? List.castFrom<dynamic, String>(map['provides'])
+              : null,
+      postinstallScripts:
+          map['postinstall_scripts'] != null
+              ? List.castFrom<dynamic, String>(map['postinstall_scripts'])
+              : null,
+      postuninstallScripts:
+          map['postuninstall_scripts'] != null
+              ? List.castFrom<dynamic, String>(map['postuninstall_scripts'])
+              : null,
+      postupgradeScripts:
+          map['postupgrade_scripts'] != null
+              ? List.castFrom<dynamic, String>(map['postupgrade_scripts'])
+              : null,
+      keywords:
+          map['keywords'] != null
+              ? List.castFrom<dynamic, String>(map['keywords'])
+              : null,
+      supportedMimeType:
+          map['supported_mime_type'] != null
+              ? List.castFrom<dynamic, String>(map['supported_mime_type'])
+              : null,
+      actions:
+          map['actions'] != null
+              ? List.castFrom<dynamic, String>(map['actions'])
+              : null,
+      categories:
+          map['categories'] != null
+              ? List.castFrom<dynamic, String>(map['categories'])
+              : null,
       startupNotify: map['startup_notify'],
       genericName: map['generic_name'],
       installedSize: map['installed_size'],
@@ -190,7 +204,7 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
   int packageRelease;
   int? installedSize;
   List<String> licenses;
-  List<String> groups;
+
   String? icon;
   String? metainfo;
   String? genericName;
@@ -210,30 +224,36 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
   List<String>? categories;
 
   List<String> get postinstallScripts => [
-        'ln -s /usr/share/$appBinaryName/$appBinaryName /usr/bin/$appBinaryName',
-        'chmod +x /usr/bin/$appBinaryName',
-        ..._postinstallScripts,
-      ];
+    'ln -s /opt/$appBinaryName/$appBinaryName /usr/bin/$appBinaryName',
+    'chmod +x /usr/bin/$appBinaryName',
+    ..._postinstallScripts,
+  ];
 
   List<String> get postuninstallScripts => [
-        'rm /usr/bin/$appBinaryName',
-        ..._postremoveScripts,
-      ];
+    'rm /usr/bin/$appBinaryName',
+    ..._postremoveScripts,
+  ];
 
   List<String> get postupgradeScripts => _postupgradeScripts;
 
   @override
   Map<String, dynamic> toJson() {
+    String pkgver = "";
+    final spAppVersion = appVersion.toString().split("+");
+    if (spAppVersion.length == 2) {
+      pkgver = "${spAppVersion[0]}-${spAppVersion[1]}";
+    } else {
+      pkgver = "${spAppVersion[0]}-${packageRelease}";
+    }
     return {
       'PKGINFO': {
         'pkgname': packageName,
-        'pkgver': appVersion.toString(),
+        'pkgver': '${pkgver}',
         'pkgdesc': pubspec.description,
         'packager': maintainer,
         'size': installedSize,
-        'license': '(${licenses.join(', ')})',
-        'groups': '(${groups.join(', ')})',
-        'arch': '(${_getArchitecture()})',
+        'license': '${licenses.join(', ')}',
+        'arch': '${_getArchitecture()}',
         'url': pubspec.homepage,
         'options': options != null ? "(${options!.join(', ')})" : null,
         'depends':
@@ -251,18 +271,22 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
         'GenericName': genericName,
         'Icon': appBinaryName,
         'Exec': '$appBinaryName %U',
-        'Actions': actions != null && actions!.isNotEmpty
-            ? '${actions!.join(';')};'
-            : null,
-        'MimeType': supportedMimeType != null && supportedMimeType!.isNotEmpty
-            ? '${supportedMimeType!.join(';')};'
-            : null,
-        'Categories': categories != null && categories!.isNotEmpty
-            ? '${categories!.join(';')};'
-            : null,
-        'Keywords': keywords != null && keywords!.isNotEmpty
-            ? '${keywords!.join(';')};'
-            : null,
+        'Actions':
+            actions != null && actions!.isNotEmpty
+                ? '${actions!.join(';')};'
+                : null,
+        'MimeType':
+            supportedMimeType != null && supportedMimeType!.isNotEmpty
+                ? '${supportedMimeType!.join(';')};'
+                : null,
+        'Categories':
+            categories != null && categories!.isNotEmpty
+                ? '${categories!.join(';')};'
+                : null,
+        'Keywords':
+            keywords != null && keywords!.isNotEmpty
+                ? '${keywords!.join(';')};'
+                : null,
         'StartupNotify': startupNotify,
       }..removeWhere((key, value) => value == null),
     };
@@ -271,9 +295,7 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
   Map<String, String> toFilesString() {
     final json = toJson();
     final pkginfoFile =
-        '${(json['PKGINFO'] as Map<String, dynamic>).entries.map(
-              (e) => '${e.key}=${e.value}',
-            ).join('\n')}\n';
+        '${(json['PKGINFO'] as Map<String, dynamic>).entries.map((e) => '${e.key} = ${e.value}').join('\n')}\n';
     final installFileMap = {
       'post_install': postinstallScripts.join('\n\t'),
       'post_upgrade':
@@ -282,16 +304,14 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
     }..removeWhere((key, value) => value == null);
 
     final installFile = installFileMap.entries
-        .map(
-          (e) => '${e.key}() {\n\t${e.value}\n}',
-        )
+        .map((e) => '${e.key}() {\n\t${e.value}\n}')
         .join('\n');
 
     final desktopFile = [
       '[Desktop Entry]',
       ...(json['DESKTOP'] as Map<String, dynamic>).entries.map(
-            (e) => '${e.key}=${e.value}',
-          ),
+        (e) => '${e.key}=${e.value}',
+      ),
     ].join('\n');
     final map = {
       'PKGINFO': pkginfoFile,

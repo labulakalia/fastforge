@@ -15,8 +15,8 @@ installed_size: 6604
 
 # direct dependencies required by the application
 # refer: https://www.debian.org/doc/debian-policy/ch-relationships.html
-# dependencies:
-#   - libkeybinder-3.0-0 (>= 0.3.2)
+depends:
+  # - gtk3
 
 # refer: https://www.debian.org/doc/debian-policy/ch-relationships.html
 # build_dependencies_indep:
@@ -61,9 +61,9 @@ installed_size: 6604
 #   - spotify
 
 postinstall_scripts:
-  - echo `Installed my awesome app`
+  - echo "Installed my awesome app"
 postuninstall_scripts:
-  - echo `Surprised Pickachu face`
+  - echo "Surprised Pickachu face"
 
 # application icon path relative to project url
 icon: assets/logo.png
@@ -76,6 +76,8 @@ keywords:
 
 # a name to categorize the app into a section of application
 generic_name: Music Application
+
+licenses: [custom]
 
 # supported mime types that can be opened using this application
 # supported_mime_type:

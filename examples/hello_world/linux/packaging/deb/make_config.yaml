@@ -75,9 +75,9 @@ installed_size: 6604
 essential: false
 
 postinstall_scripts:
-  - echo `Installed my awesome app`
+  - echo "Installed my awesome app"
 postuninstall_scripts:
-  - echo `Surprised Pickachu face`
+  - echo "Surprised Pickachu face"
 
 # application icon path relative to project url
 icon: assets/logo.png
