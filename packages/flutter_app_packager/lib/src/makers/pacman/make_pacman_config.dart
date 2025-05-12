@@ -240,11 +240,14 @@ class MakePacmanConfig extends MakeLinuxPackageConfig {
   Map<String, dynamic> toJson() {
     String pkgver = "";
     final spAppVersion = appVersion.toString().split("+");
+    // https://wiki.archlinux.org/title/Arch_package_guidelines#Package_versioning
+    spAppVersion[0] = spAppVersion[0].replaceAll("-", "_");
     if (spAppVersion.length == 2) {
       pkgver = "${spAppVersion[0]}-${spAppVersion[1]}";
     } else {
       pkgver = "${spAppVersion[0]}-${packageRelease}";
     }
+
     return {
       'PKGINFO': {
         'pkgname': packageName,
